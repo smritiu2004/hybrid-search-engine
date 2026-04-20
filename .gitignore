@@ -1,0 +1,43 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+
+
+# Mac extended attributes
+*.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Logs & temp
+*.log
+*.tmp
+*.swp
+
+# Test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build outputs
+dist/
+build/
+*.out
+
+data/*.tmp
+data/*.log
+data/*.npy
+.env
