@@ -103,13 +103,14 @@ class Storage:
             "index": index_dict,
             "url_to_id": indexer.url_to_id,
             "id_to_url": {
-                str(k): v
-                for k, v in indexer.id_to_url.items()
+        str(k): v
+        for k, v in indexer.id_to_url.items()
             },
-            "page_lengths": {
-                str(k): v
-                for k, v in indexer.page_lengths.items()
-            }
+        "page_lengths": {
+        str(k): v
+        for k, v in indexer.page_lengths.items()
+        },
+        "pages": indexer.pages
         }
 
         # Step 3 — serialising with MessagePack
@@ -170,7 +171,7 @@ class Storage:
         logger.info("Checksum verified")
 
         # Step 4 — deserialising
-        payload = msgpack.unpackb(serialised, raw=False)
+        payload = msgpack.unpackb(serialised, raw=False, strict_map_key=False)
 
         # Step 5 — rebuild indexer state
         indexer.index = self._dict_to_index(payload["index"])
@@ -186,6 +187,7 @@ class Storage:
             int(k): v
             for k, v in payload["page_lengths"].items()
         }
+        indexer.pages = payload.get("pages", {})
 
         logger.info(f"Index loaded — {len(indexer.url_to_id)} pages, {len(indexer.index)} terms")
         return True

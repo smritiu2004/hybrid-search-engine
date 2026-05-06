@@ -35,6 +35,7 @@ class Indexer:
 
         # Stores total number of words per page for later TF calculation
         self.page_lengths: dict[int, int] = {}
+        self.pages: dict[str, str] = {}  
 
     
 
@@ -125,7 +126,8 @@ class Indexer:
         if not tokens:
             logger.warning(f"No tokens extracted from {url}")
             return
-
+        
+        self.pages[url] = text
         self.page_lengths[url_id] = len(tokens)
 
         # Records position of each token

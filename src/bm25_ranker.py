@@ -20,9 +20,6 @@ class BM25Ranker:
         # tokenised pages in same order as url_ids
         self.corpus = []   
 
-    # ------------------------------------------------------------------
-    # Build
-    # ------------------------------------------------------------------
 
     def build(self, indexer) -> None:
         """
