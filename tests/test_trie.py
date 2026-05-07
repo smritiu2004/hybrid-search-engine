@@ -9,9 +9,6 @@ import pytest
 from src.trie import Trie
 from src.indexer import Indexer
 
-# -----------------------------------------------------------------------
-# Fixtures
-# -----------------------------------------------------------------------
 
 @pytest.fixture
 def trie():
@@ -49,10 +46,6 @@ def built_trie():
     return t
 
 
-# -----------------------------------------------------------------------
-# Initialisation Tests
-# -----------------------------------------------------------------------
-
 class TestTrieInit:
     def test_empty_trie_size_zero(self, trie):
         """Fresh Trie has size 0."""
@@ -71,9 +64,6 @@ class TestTrieInit:
         assert len(trie.root.children) == 0
 
 
-# -----------------------------------------------------------------------
-# Insert Tests
-# -----------------------------------------------------------------------
 
 class TestTrieInsert:
     def test_insert_increases_size(self, trie):
@@ -112,10 +102,6 @@ class TestTrieInsert:
         assert trie.size == 2
 
 
-# -----------------------------------------------------------------------
-# Contains Tests
-# -----------------------------------------------------------------------
-
 class TestTrieContains:
     def test_contains_inserted_word(self, populated_trie):
         """contains returns True for inserted word."""
@@ -139,9 +125,6 @@ class TestTrieContains:
         assert populated_trie.contains("") is False
 
 
-# -----------------------------------------------------------------------
-# starts_with Tests
-# -----------------------------------------------------------------------
 
 class TestTrieStartsWith:
     def test_starts_with_valid_prefix(self, populated_trie):
@@ -161,9 +144,6 @@ class TestTrieStartsWith:
         assert populated_trie.starts_with("") is False
 
 
-# -----------------------------------------------------------------------
-# Autocomplete Tests
-# -----------------------------------------------------------------------
 
 class TestTrieAutocomplete:
     def test_autocomplete_returns_list(self, populated_trie):
@@ -212,9 +192,6 @@ class TestTrieAutocomplete:
             assert word.startswith("go")
 
 
-# -----------------------------------------------------------------------
-# Build Tests
-# -----------------------------------------------------------------------
 
 class TestTrieBuild:
     def test_build_from_indexer(self, built_trie):
@@ -230,3 +207,9 @@ class TestTrieBuild:
     def test_built_trie_len_matches_size(self, built_trie):
         """len() matches size attribute."""
         assert len(built_trie) == built_trie.size
+    
+    def test_collect_words_respects_limit_early_exit(self, populated_trie):
+        """_collect_words stops collecting once limit reached."""
+        results = []
+        populated_trie._collect_words(populated_trie.root, results, 1)
+        assert len(results) == 1

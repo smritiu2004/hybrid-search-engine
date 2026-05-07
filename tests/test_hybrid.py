@@ -8,9 +8,6 @@ import pytest
 from src.hybrid import HybridSearch
 from src.indexer import Indexer
 
-# -----------------------------------------------------------------------
-# Fixtures
-# -----------------------------------------------------------------------
 
 @pytest.fixture
 def hybrid():
@@ -69,10 +66,6 @@ def built_indexer():
     return indexer
 
 
-# -----------------------------------------------------------------------
-# Initialisation Tests
-# -----------------------------------------------------------------------
-
 class TestHybridInit:
     def test_default_k(self, hybrid):
         """HybridSearch initialises with k=60."""
@@ -83,10 +76,6 @@ class TestHybridInit:
         hybrid = HybridSearch(k=30)
         assert hybrid.k == 30
 
-
-# -----------------------------------------------------------------------
-# RRF Tests
-# -----------------------------------------------------------------------
 
 class TestRRF:
     def test_rrf_returns_dict(self, hybrid, bm25_results, semantic_results):
@@ -137,11 +126,6 @@ class TestRRF:
         result = hybrid._reciprocal_rank_fusion([bm25_results])
         assert isinstance(result, dict)
         assert len(result) == len(bm25_results)
-
-
-# -----------------------------------------------------------------------
-# Search Tests
-# -----------------------------------------------------------------------
 
 class TestHybridSearch:
     def test_search_returns_list(
@@ -205,9 +189,6 @@ class TestHybridSearch:
         assert result_ids.issubset(all_ids)
 
 
-# -----------------------------------------------------------------------
-# Explain Tests
-# -----------------------------------------------------------------------
 
 class TestHybridExplain:
     def test_explain_returns_dict(

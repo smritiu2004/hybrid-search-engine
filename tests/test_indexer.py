@@ -8,9 +8,6 @@ Covers: URL registration, text processing, delta encoding,
 import pytest
 from src.indexer import Indexer
 
-# -----------------------------------------------------------------------
-# Fixtures
-# -----------------------------------------------------------------------
 
 @pytest.fixture
 def indexer():
@@ -44,9 +41,6 @@ def built_indexer(indexer, sample_pages):
     return indexer
 
 
-# -----------------------------------------------------------------------
-# Initialisation Tests
-# -----------------------------------------------------------------------
 
 class TestIndexerInit:
     def test_empty_index_on_init(self, indexer):
@@ -66,10 +60,6 @@ class TestIndexerInit:
         """Indexer starts with empty page lengths."""
         assert len(indexer.page_lengths) == 0
 
-
-# -----------------------------------------------------------------------
-# URL Registration Tests
-# -----------------------------------------------------------------------
 
 class TestURLRegistration:
     def test_registers_url(self, indexer):
@@ -96,10 +86,6 @@ class TestURLRegistration:
         assert indexer.id_to_url[url_id] == url
         assert indexer.url_to_id[url] == url_id
 
-
-# -----------------------------------------------------------------------
-# Text Processing Tests
-# -----------------------------------------------------------------------
 
 class TestTextProcessing:
     def test_lowercases_text(self, indexer):
@@ -133,11 +119,6 @@ class TestTextProcessing:
         """_process_text returns a list."""
         result = indexer._process_text("hello world")
         assert isinstance(result, list)
-
-
-# -----------------------------------------------------------------------
-# Delta Encoding Tests
-# -----------------------------------------------------------------------
 
 class TestDeltaEncoding:
     def test_delta_encode_basic(self, indexer):
@@ -175,10 +156,6 @@ class TestDeltaEncoding:
         """Single position decodes correctly."""
         assert indexer._delta_decode([5]) == [5]
 
-
-# -----------------------------------------------------------------------
-# Indexing Tests
-# -----------------------------------------------------------------------
 
 class TestIndexing:
     def test_index_page_stores_text(self, indexer):
@@ -225,10 +202,6 @@ class TestIndexing:
                 assert "tf_idf" in stats
 
 
-# -----------------------------------------------------------------------
-# TF-IDF Tests
-# -----------------------------------------------------------------------
-
 class TestTFIDF:
     def test_tf_between_zero_and_one(self, built_indexer):
         """TF values are between 0 and 1."""
@@ -263,10 +236,6 @@ class TestTFIDF:
                 built_indexer.index[multi_term][multi_uid]["tf_idf"]
             )
 
-
-# -----------------------------------------------------------------------
-# Lookup Helper Tests
-# -----------------------------------------------------------------------
 
 class TestLookupHelpers:
     def test_get_url_returns_correct_url(self, built_indexer):

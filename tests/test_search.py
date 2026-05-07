@@ -5,15 +5,14 @@ Covers: build, find, print_term, explain,
         mode flags, edge cases, no results handling.
 """
 
+from unittest import result
+
 import pytest
 from src.search import SearchEngine
 from src.indexer import Indexer
 from src.storage import Storage
+import os
 
-
-# -----------------------------------------------------------------------
-# Fixtures
-# -----------------------------------------------------------------------
 
 @pytest.fixture
 def sample_pages():
@@ -56,9 +55,6 @@ def search_engine(built_indexer, sample_pages):
     return engine
 
 
-# -----------------------------------------------------------------------
-# Initialisation Tests
-# -----------------------------------------------------------------------
 
 class TestSearchEngineInit:
     def test_not_ready_before_build(self):
@@ -80,10 +76,6 @@ class TestSearchEngineInit:
         assert search_engine.trie is not None
         assert search_engine.bktree is not None
 
-
-# -----------------------------------------------------------------------
-# Find Tests
-# -----------------------------------------------------------------------
 
 class TestSearchEngineFind:
     def test_find_returns_list(self, search_engine):
@@ -158,9 +150,6 @@ class TestSearchEngineFind:
         assert isinstance(results, list)
 
 
-# -----------------------------------------------------------------------
-# Print Term Tests
-# -----------------------------------------------------------------------
 
 class TestSearchEnginePrintTerm:
     def test_print_term_returns_dict(self, search_engine):
@@ -215,10 +204,6 @@ class TestSearchEnginePrintTerm:
         assert result is None
 
 
-# -----------------------------------------------------------------------
-# Explain Tests
-# -----------------------------------------------------------------------
-
 class TestSearchEngineExplain:
     def test_explain_returns_dict(self, search_engine):
         """explain returns a dictionary."""
@@ -252,10 +237,6 @@ class TestSearchEngineExplain:
         assert result is None
 
 
-# -----------------------------------------------------------------------
-# Format Results Tests
-# -----------------------------------------------------------------------
-
 class TestFormatResults:
     def test_format_results_returns_list(self, search_engine):
         """_format_results returns a list."""
@@ -283,3 +264,152 @@ class TestFormatResults:
         """_format_results handles empty input."""
         results = search_engine._format_results([])
         assert results == []
+
+
+class TestRerankerEdgeCases:
+    def test_rerank_empty_candidates(self, search_engine):
+        """reranker returns empty list for empty candidates."""
+        result = search_engine.reranker.rerank(
+            query="good",
+            candidates=[],
+            indexer=search_engine.indexer,
+            pages=search_engine.pages
+        )
+        assert result == []
+
+    def test_rerank_empty_query(self, search_engine):
+        """reranker returns empty list for empty query."""
+        result = search_engine.reranker.rerank(
+            query="",
+            candidates=[(0, 0.5)],
+            indexer=search_engine.indexer,
+            pages=search_engine.pages
+        )
+        assert result == []
+
+    def test_rerank_no_valid_pairs_returns_candidates(
+        self, search_engine
+    ):
+        """reranker returns original candidates when no text found."""
+        # Use url_id that exists but with empty pages
+        empty_pages = {
+            url: "" for url in search_engine.indexer.url_to_id.keys()
+        }
+        url_id = list(search_engine.indexer.url_to_id.values())[0]
+        candidates = [(url_id, 0.5)]
+        result = search_engine.reranker.rerank(
+            query="good",
+            candidates=candidates,
+            indexer=search_engine.indexer,
+            pages=empty_pages
+        )
+        assert result == candidates
+
+    def test_rerank_skips_missing_text(self, search_engine):
+        """reranker skips candidates with no page text."""
+        partial_pages = {}
+        url_id = list(search_engine.indexer.url_to_id.values())[0]
+        candidates = [(url_id, 0.5), (9999, 0.3)]
+        result = search_engine.reranker.rerank(
+            query="good",
+            candidates=candidates,
+            indexer=search_engine.indexer,
+            pages=partial_pages
+        )
+        assert isinstance(result, list)
+
+class TestSemanticEdgeCases:
+    def test_search_before_build_returns_empty(self):
+        """semantic search returns empty if FAISS not built."""
+        from src.semantic import SemanticSearch
+        semantic = SemanticSearch()
+        result = semantic.search("good")
+        assert result == []
+
+    def test_search_empty_query_returns_empty(self, search_engine):
+        """semantic search returns empty for empty query."""
+        result = search_engine.semantic.search("")
+        assert result == []
+
+    def test_build_empty_pages_returns_none(self, built_indexer):
+        """semantic build handles empty pages gracefully."""
+        from src.semantic import SemanticSearch
+        semantic = SemanticSearch()
+        semantic.build(built_indexer, {})
+        assert semantic.faiss_index is None
+
+    def test_save_without_build_returns_none(self, tmp_path):
+        """semantic save does nothing if no FAISS index."""
+        from src.semantic import SemanticSearch
+        semantic = SemanticSearch()
+        path = str(tmp_path / "faiss.index")
+        semantic.save(path)
+        assert not os.path.exists(path)
+
+    def test_save_and_load_roundtrip(self, search_engine, tmp_path):
+        """semantic save and load roundtrip works correctly."""
+        from src.semantic import SemanticSearch
+        path = str(tmp_path / "faiss.index")
+        search_engine.semantic.save(path)
+        new_semantic = SemanticSearch()
+        result = new_semantic.load(path)
+        assert result is True
+        assert new_semantic.faiss_index is not None
+
+    def test_load_missing_index_returns_false(self, tmp_path):
+        """semantic load returns False for missing index file."""
+        from src.semantic import SemanticSearch
+        semantic = SemanticSearch()
+        result = semantic.load(str(tmp_path / "missing.index"))
+        assert result is False
+
+    def test_load_missing_url_ids_returns_false(
+        self, search_engine, tmp_path
+    ):
+        """semantic load returns False when url_ids file missing."""
+        from src.semantic import SemanticSearch
+        import os
+        path = str(tmp_path / "faiss.index")
+        search_engine.semantic.save(path)
+        # Remove url_ids file
+        os.remove(path + ".url_ids.npy")
+        semantic = SemanticSearch()
+        result = semantic.load(path)
+        assert result is False
+
+class TestSearchEngineLoad:
+    def test_load_fails_without_faiss(self, built_indexer, sample_pages):
+        """load returns False when FAISS index missing."""
+        engine = SearchEngine()
+        # Patch semantic.load to simulate missing FAISS file
+        engine.semantic.load = lambda path="data/faiss.index": False
+        result = engine.load(built_indexer, sample_pages)
+        assert result is False
+
+    def test_handle_no_results_returns_suggestion(self, search_engine):
+        """_handle_no_results returns suggestion for unknown query."""
+        processed = search_engine.processor.process("goood")
+        result = search_engine._handle_no_results(processed)
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert result[0]["type"] == "suggestion"
+
+    def test_handle_no_results_tries_variants(self, search_engine):
+        """_handle_no_results tries individual tokens as fallback."""
+        processed = search_engine.processor.process("good xyzabc")
+        result = search_engine._handle_no_results(processed)
+        assert isinstance(result, list)
+
+    def test_find_triggers_no_results_handler(self, search_engine):
+        """find triggers no results handler for unknown query."""
+        results = search_engine.find("xyzabc123")
+        assert isinstance(results, list)
+
+    def test_hybrid_returns_empty_when_no_fusion(self, search_engine):
+        """_hybrid returns empty when RRF produces nothing."""
+        results = search_engine._hybrid(
+            ["xyzabc"],
+            "xyzabc",
+            10
+        )
+        assert isinstance(results, list)

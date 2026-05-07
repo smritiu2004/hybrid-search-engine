@@ -8,9 +8,6 @@ Covers: processing, tokenisation, lemmatisation,
 import pytest
 from src.query_processor import QueryProcessor
 
-# -----------------------------------------------------------------------
-# Fixtures
-# -----------------------------------------------------------------------
 
 @pytest.fixture
 def processor():
@@ -18,19 +15,11 @@ def processor():
     return QueryProcessor()
 
 
-# -----------------------------------------------------------------------
-# Initialisation Tests
-# -----------------------------------------------------------------------
-
 class TestQueryProcessorInit:
     def test_processor_has_nlp(self, processor):
         """QueryProcessor initialises with spaCy nlp pipeline."""
         assert processor.nlp is not None
 
-
-# -----------------------------------------------------------------------
-# Process Tests
-# -----------------------------------------------------------------------
 
 class TestProcess:
     def test_returns_dict(self, processor):
@@ -101,10 +90,6 @@ class TestProcess:
         assert result["is_phrase"] is False
 
 
-# -----------------------------------------------------------------------
-# Phrase Detection Tests
-# -----------------------------------------------------------------------
-
 class TestPhraseDetection:
     def test_single_word_not_phrase(self, processor):
         """Single word query is not a phrase."""
@@ -126,10 +111,6 @@ class TestPhraseDetection:
         result = processor.process("love life")
         assert result["is_phrase"] is True
 
-
-# -----------------------------------------------------------------------
-# Helper Tests
-# -----------------------------------------------------------------------
 
 class TestHelpers:
     def test_is_empty_true_for_empty_tokens(self, processor):
@@ -159,9 +140,6 @@ class TestHelpers:
         assert processor.get_normalised(processed) == "good friends"
 
 
-# -----------------------------------------------------------------------
-# Phrase Variants Tests
-# -----------------------------------------------------------------------
 
 class TestPhraseVariants:
     def test_variants_returns_list(self, processor):
