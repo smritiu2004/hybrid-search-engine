@@ -218,11 +218,10 @@ pytest-cov==5.0.0
 
 ## References
 
-- Cormack, G.V., Clarke, C.L.A., Buettcher, S. (2009). 
-  Reciprocal Rank Fusion outperforms Condorcet and individual 
-  Rank Learning Methods. SIGIR 2009.
-- Robertson, S., Zaragoza, H. (2009). 
-  The Probabilistic Relevance Framework: BM25 and Beyond.
-- Reimers, N., Gurevych, I. (2019). 
-  Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.
+Cormack, G.V., Clarke, C.L.A. and Buettcher, S. 2009. Reciprocal rank fusion outperforms condorcet and individual rank learning methods. Proceedings of the 32nd international ACM SIGIR conference on Research and development in information retrieval.
+
+Reimers, N. and Gurevych, I. 2019. Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.
+
+Robertson, S. 2010. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends® in Information Retrieval. 3(4), pp.333–389.
+
 
