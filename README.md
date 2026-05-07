@@ -34,13 +34,14 @@ comp3011-web-search-tool/
 │   ├── bktree.py           # BK-Tree for spell correction
 │   ├── search.py           # SearchEngine facade
 │   └── main.py             # CLI entry point
-├── tests/
+├── ├── tests/
 │   ├── test_crawler.py
 │   ├── test_indexer.py
 │   ├── test_bm25.py
-│   ├── test_semantic.py
 │   ├── test_hybrid.py
 │   ├── test_query_processor.py
+│   ├── test_trie.py
+│   ├── test_bktree.py
 │   └── test_search.py
 ├── data/
 │   ├── index.msgpack       
@@ -59,7 +60,7 @@ comp3011-web-search-tool/
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/Smriti-Umesh/comp3011-web-search-tool.git
+git clone https://github.com/username/comp3011-web-search-tool.git
 cd comp3011-web-search-tool
 ```
 

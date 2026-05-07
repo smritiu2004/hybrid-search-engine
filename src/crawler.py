@@ -22,7 +22,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://quotes.toscrape.com"
-POLITENESS_WINDOW = 1 
+POLITENESS_WINDOW = 6
 
 
 
