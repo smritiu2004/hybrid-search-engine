@@ -19,9 +19,10 @@ semantic search, and Cross-Encoder reranking.
 
 ## Project Structure
 
-~~~ bash 
+~~~bash
 comp3011-web-search-tool/
 ├── src/
+│   ├── __init__.py
 │   ├── crawler.py          # Web crawler with politeness window
 │   ├── indexer.py          # Inverted index with delta encoding
 │   ├── storage.py          # MessagePack serialisation + SHA256
@@ -34,7 +35,8 @@ comp3011-web-search-tool/
 │   ├── bktree.py           # BK-Tree for spell correction
 │   ├── search.py           # SearchEngine facade
 │   └── main.py             # CLI entry point
-├── ├── tests/
+├── tests/
+│   ├── __init__.py
 │   ├── test_crawler.py
 │   ├── test_indexer.py
 │   ├── test_bm25.py
@@ -42,10 +44,13 @@ comp3011-web-search-tool/
 │   ├── test_query_processor.py
 │   ├── test_trie.py
 │   ├── test_bktree.py
+│   ├── test_storage.py
 │   └── test_search.py
 ├── data/
-│   ├── index.msgpack       
-│   └── faiss.index         
+│   ├── index.msgpack       # Compiled inverted index
+│   └── faiss.index         # FAISS vector index
+├── conftest.py             # Pytest path configuration
+├── setup.cfg               # Coverage configuration
 ├── requirements.txt
 └── README.md
 ~~~
@@ -60,7 +65,7 @@ comp3011-web-search-tool/
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/username/comp3011-web-search-tool.git
+git clone https://github.com/Smriti-Umesh/comp3011-web-search-tool.git
 cd comp3011-web-search-tool
 ```
 
