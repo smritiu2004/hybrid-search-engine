@@ -224,4 +224,5 @@ Reimers, N. and Gurevych, I. 2019. Sentence-BERT: Sentence Embeddings using Siam
 
 Robertson, S. 2010. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends® in Information Retrieval. 3(4), pp.333–389.
 
+Bhatia, R. 2024. Cross-encoders vs Bi-encoders : A deep-dive into text encoding methods. Medium. [Online]. Available from: https://medium.com/@rbhatia46/cross-encoders-vs-bi-encoders-a-deep-dive-into-text-encoding-methods-d9aa890d6ca4.
 
