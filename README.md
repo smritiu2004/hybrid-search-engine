@@ -4,6 +4,9 @@ A command-line search tool that crawls [quotes.toscrape.com](https://quotes.tosc
 builds an inverted index, and provides hybrid search combining BM25+, 
 semantic search, and Cross-Encoder reranking.
 
+## NOTE
+Some commits appear under a personal GitHub account (with suffix 2004) due to local Git configuration using a different email. Both accounts belong to the same author, and all work was done independetly by me.
+
 ## Tech Stack
 
 | Component | Technology |
