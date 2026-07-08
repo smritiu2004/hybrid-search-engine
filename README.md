@@ -1,11 +1,8 @@
-# COMP3011 Web Search Tool
+# A CLI-based Web Search Tool
 
-A command-line search tool that crawls [quotes.toscrape.com](https://quotes.toscrape.com), 
+A command-line search tool, done as part of university coursework, that crawls [quotes.toscrape.com](https://quotes.toscrape.com), 
 builds an inverted index, and provides hybrid search combining BM25+, 
 semantic search, and Cross-Encoder reranking.
-
-## NOTE
-Some commits appear under a personal GitHub account (with suffix 2004) due to local Git configuration using a different email. Both accounts belong to the same author, and all work was done independetly by me.
 
 ## Tech Stack
 
@@ -20,59 +17,13 @@ Some commits appear under a personal GitHub account (with suffix 2004) due to lo
 | Query Suggestions | Trie + BK-Tree (Levenshtein) |
 | Serialisation | MessagePack + SHA256 checksum |
 
-## Project Structure
-
-~~~bash
-comp3011-web-search-tool/
-├── src/
-│   ├── __init__.py
-│   ├── crawler.py          # Web crawler with politeness window
-│   ├── indexer.py          # Inverted index with delta encoding
-│   ├── storage.py          # MessagePack serialisation + SHA256
-│   ├── bm25_ranker.py      # BM25+ keyword ranking
-│   ├── semantic.py         # Bi-Encoder + FAISS semantic search
-│   ├── reranker.py         # Cross-Encoder reranking
-│   ├── hybrid.py           # Reciprocal Rank Fusion
-│   ├── query_processor.py  # spaCy query processing pipeline
-│   ├── trie.py             # Prefix tree for autocomplete
-│   ├── bktree.py           # BK-Tree for spell correction
-│   ├── search.py           # SearchEngine facade
-│   └── main.py             # CLI entry point
-├── tests/
-│   ├── __init__.py
-│   ├── test_crawler.py
-│   ├── test_indexer.py
-│   ├── test_bm25.py
-│   ├── test_hybrid.py
-│   ├── test_query_processor.py
-│   ├── test_trie.py
-│   ├── test_bktree.py
-│   ├── test_storage.py
-│   └── test_search.py
-├── data/
-│   ├── index.msgpack       # Compiled inverted index
-│   └── faiss.index         # FAISS vector index
-├── conftest.py             # Pytest path configuration
-├── setup.cfg               # Coverage configuration
-├── requirements.txt
-└── README.md
-~~~
-
-## Installation
-
-### Prerequisites
+## Prerequisites
 - Python 3.10+
 - pip
 
-### Setup
+## Environment Setup
 
-**1. Clone the repository:**
-```bash
-git clone https://github.com/Smriti-Umesh/comp3011-web-search-tool.git
-cd comp3011-web-search-tool
-```
-
-**2. Create and activate virtual environment:**
+**1. Create and activate virtual environment**
 ```bash
 python -m venv venv
 
@@ -83,15 +34,16 @@ source venv/bin/activate
 venv\Scripts\activate
 ```
 
-**3. Install dependencies:**
+**2. Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-**4. Download spaCy language model:**
+**3. Download spaCy language model**
 ```bash
 python -m spacy download en_core_web_sm
 ```
+
 
 ## Usage
 
@@ -99,6 +51,7 @@ python -m spacy download en_core_web_sm
 ```bash
 python src/main.py
 ```
+
 
 ### Commands
 
@@ -151,11 +104,17 @@ help
 quit
 ~~~
 
+
+
+
 ## Design Decisions
+
+<details>
+<summary>Click to expand rationale behind key technical choices</summary>
 
 ### Inverted Index
 Uses a nested `defaultdict` for O(1) average lookup. Position lists 
-are **delta-encoded** — storing gaps between positions rather than raw 
+are delta-encoded — storing gaps between positions rather than raw 
 values, reducing storage size. URLs are mapped to integer IDs via a 
 bidirectional dict to avoid redundant string storage throughout the index.
 
@@ -175,7 +134,7 @@ making it robust without manual weight tuning.
 
 ### FAISS IndexFlatIP
 Vectors are L2-normalised before storage, making inner product equivalent 
-to cosine similarity. `IndexFlatIP` was chosen over `IndexFlatL2` for 
+to cosine similarity. IndexFlatIP was chosen over IndexFlatL2 for 
 this reason.
 
 ### MessagePack + SHA256
@@ -184,40 +143,12 @@ faster file than JSON. A SHA256 checksum is stored alongside the index
 and verified on every load to detect corruption.
 
 ### Query Suggestions
-- **Trie** — O(m) prefix autocomplete where m = query length
-- **BK-Tree** — O(log n) spell correction using Levenshtein distance 
+- Trie — O(m) prefix autocomplete where m = query length
+- BK-Tree — O(log n) spell correction using Levenshtein distance 
   with triangle inequality pruning
 
-## Testing
+</details>
 
-**Run full test suite:**
-```bash
-pytest tests/ -v
-```
-
-**Run with coverage report:**
-```bash
-pytest --cov=src --cov-report=term-missing tests/
-```
-
-**Run a specific test file:**
-```bash
-pytest tests/test_crawler.py -v
-```
-
-## Dependencies
-
-~~~ bash 
-requests==2.31.0
-beautifulsoup4==4.12.3
-rank-bm25==0.2.2
-sentence-transformers==2.7.0
-faiss-cpu==1.8.0
-msgpack==1.0.8
-spacy==3.7.4
-pytest==8.1.1
-pytest-cov==5.0.0
-~~~
 
 ## References
 
