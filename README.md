@@ -1,4 +1,4 @@
-# A CLI-based Web Search Tool
+# Hybrid Semantic Search Engine
 
 A command-line search tool, done as part of university coursework, that crawls [quotes.toscrape.com](https://quotes.toscrape.com), 
 builds an inverted index, and provides hybrid search combining BM25+, 
