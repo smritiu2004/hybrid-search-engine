@@ -199,7 +199,6 @@ def handle_load(
           f"{len(indexer.url_to_id)} pages\n")
 
     # Rebuild pages dict from url_to_id
-    # Note: raw text not stored — semantic loaded from FAISS file
     pages = indexer.pages
 
 
